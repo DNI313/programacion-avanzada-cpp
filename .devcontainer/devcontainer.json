@@ -1,0 +1,17 @@
+{
+  "name": "Programacion Avanzada en C++ (USFQ)",
+  "image": "mcr.microsoft.com/devcontainers/cpp:ubuntu-24.04",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools"
+      ],
+      "settings": {
+        "C_Cpp.default.cppStandard": "c++20"
+      }
+    }
+  },
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y libgtest-dev valgrind cppcheck && echo '--- Verificacion de ambiente ---' && g++ --version && gdb --version && cmake --version && echo 'Ambiente listo.'",
+  "remoteUser": "vscode"
+}
