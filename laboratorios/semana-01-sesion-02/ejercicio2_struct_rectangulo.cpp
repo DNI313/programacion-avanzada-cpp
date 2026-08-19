@@ -1,54 +1,26 @@
-// Ejercicio 2:
-
-// Objetivo: el mismo comportamiento del ejercicio 1, pero base y altura
-// viven juntos dentro de un objeto Rectangulo, y area(), perimetro() y
-// escalar() son metodos de ese objeto: ya no se pasan como parametros
-// sueltos, y no existe forma de mezclar la base de un rectangulo con la
-// altura de otro.
-//
-// Usamos struct (no class): en C++ ambas definen una clase en el sentido
-// de la sesion de hoy (agrupan atributos y metodos), la diferencia lo veremos la siguiente clase
-//
-// Salida esperada:
-// Area: 50
-// Perimetro: 30
-// Despues de escalar x2 -> base: 20, altura: 10
-//
-// Compilar:  g++ -std=c++20 -Wall -Wextra -g ejercicio2_struct_rectangulo.cpp -o bin/ejercicio2
-// Ejecutar:  ./bin/ejercicio2
-
 #include <iostream>
 
 struct Rectangulo {
-    double base;
-    double altura;
+    double base; // atributos
+    double altura; // atributos
 
-    double area() {
-        // TODO: retorna base * altura
-        return 0.0;
-    }
-
-    double perimetro() {
-        // TODO: retorna 2 * (base + altura)
-        return 0.0;
-    }
-
-    void escalar(double factor) {
-        // TODO: reasigna base y altura multiplicandolos por factor
-        // (usa base = ... y altura = ..., como en cualquier funcion que ya conoces)
+    double area(){ // comportamiento -> metodo
+        return base * altura;
     }
 };
 
-int main() {
-    Rectangulo r;
-    r.base = 10.0;
-    r.altura = 5.0;
+int main(){
 
-    std::cout << "Area: " << r.area() << std::endl;
-    std::cout << "Perimetro: " << r.perimetro() << std::endl;
+    Rectangulo rect1;
+    Rectangulo rect2;
+    Rectangulo rect3;
 
-    r.escalar(2.0);
-    std::cout << "Despues de escalar x2 -> base: " << r.base << ", altura: " << r.altura << std::endl;
+    rect1.altura = 5;
+    rect1.base = 10.4;
+
+//  std::cout << "Area rect 1: " << area(base, altura) << std::endl;
+    std::cout << "Area rect 1: " << rect1.area() << std::endl;
+
 
     return 0;
 }
