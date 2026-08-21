@@ -20,7 +20,7 @@
 int main() {
     // Bloque 1 (duplicado, a reemplazar por una llamada a tu funcion)
     double base1 = 4.0;
-    double altura1 = 5.0;
+    double altura1 = 3.0;
     double area1 = base1 * altura1;
     std::cout << "Area 1: " << area1 << std::endl;
 
