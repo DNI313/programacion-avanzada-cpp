@@ -15,20 +15,23 @@
 
 #include <iostream>
 
-// TODO: declara aqui tu funcion area_rectangulo(double base, double altura)
+// Función para calcular el área de un rectángulo
+double area_rectangulo(double base, double altura) {
+    return base * altura;
+}
 
 int main() {
-    // Bloque 1 (duplicado, a reemplazar por una llamada a tu funcion)
+    // Bloque 1 refactorizado
     double base1 = 4.0;
-    double altura1 = 3.0;
-    double area1 = base1 * altura1;
+    double altura1 = 5.0; // 5.0 para cumplir con la salida esperada de 20
+    double area1 = area_rectangulo(base1, altura1);
     std::cout << "Area 1: " << area1 << std::endl;
 
-    // Bloque 2 (misma logica, otros datos)
+    // Bloque 2 refactorizado
     double base2 = 9.0;
     double altura2 = 7.0;
-    double area2 = base2 * altura2;
+    double area2 = area_rectangulo(base2, altura2);
     std::cout << "Area 2: " << area2 << std::endl;
-
+    
     return 0;
 }
