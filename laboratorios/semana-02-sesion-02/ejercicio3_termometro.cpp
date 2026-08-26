@@ -27,6 +27,13 @@ private:
 
 public:
     Termometro(double celsiusInicial) {
+        if (celsiusInicial < -273.15) {
+            gradosCelsius = 0.0;
+            std::cout << "Aviso: temperatura invalida, se uso 0 por defecto" << std::endl;
+        } else {
+            gradosCelsius = celsiusInicial;
+        }
+        std::cout << "Termometro creado con " << gradosCelsius << " grados Celsius" << std::endl;
         // TODO: si celsiusInicial es menor que -273.15, asigna
         // gradosCelsius = 0.0 y avisa por consola:
         // "Aviso: temperatura invalida, se uso 0 por defecto"
@@ -39,6 +46,7 @@ public:
     ~Termometro() {
         // TODO: imprime "Termometro destruido, ultima lectura: "
         // seguido de gradosCelsius y " C".
+        std::cout << "Termometro destruido, ultima lectura: " << gradosCelsius << " C" << std::endl;
     }
 
     double getCelsius() {
@@ -48,7 +56,7 @@ public:
     double convertirAFahrenheit() {
         // TODO: retorna gradosCelsius convertido a Fahrenheit:
         // celsius * 9 / 5 + 32
-        return 0.0;
+        return gradosCelsius * 9 / 5 + 32;
     }
 };
 
