@@ -27,7 +27,7 @@ public:
     double getImaginario() { return imaginario; }
 
     NumeroComplejo operator+(NumeroComplejo otro) {
-        // TODO: retorna un NumeroComplejo nuevo con la suma de las
+    // TODO: retorna un NumeroComplejo nuevo con la suma de las
         // partes reales y la suma de las partes imaginarias.
         return NumeroComplejo(real + otro.getReal(), imaginario + otro.getImaginario());
     }
