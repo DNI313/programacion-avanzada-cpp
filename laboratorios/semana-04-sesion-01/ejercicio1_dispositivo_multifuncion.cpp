@@ -79,6 +79,8 @@ int main() {
     // y sobre que palabra exactamente?
     // mfp.setNumeroSerie(1234);
     // mfp.describir();
+    mfp.Impresora::setNumeroSerie(1234);
+    mfp.Impresora::describir();
 
     return 0;
 }
