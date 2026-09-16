@@ -25,10 +25,12 @@ int contarProductosAgotados(int* stock, int cantidadProductos) {
     }
     // TODO BUG 1: identifica que falta aqui antes de que la funcion
     // termine, y corrigelo.
+    delete [] agotados;
+    agotados = nullptr;
     return totalAgotados;
 }
 
-int* obtenerReporteFinal(int* stock, int cantidadProductos) {
+int obtenerReporteFinal(int* stock, int cantidadProductos) {
     int totalUnidades = 0;
     for (int i = 0; i < cantidadProductos; i++) {
         totalUnidades += stock[i];
@@ -36,7 +38,7 @@ int* obtenerReporteFinal(int* stock, int cantidadProductos) {
     // TODO BUG 2: esta funcion devuelve la direccion de una variable
     // local. Corrigelo (revisa si de verdad necesitas devolver un
     // puntero para esto).
-    return &totalUnidades;
+    return totalUnidades;
 }
 
 int main() {
@@ -51,10 +53,9 @@ int main() {
     int agotados = contarProductosAgotados(stock, cantidadProductos);
     std::cout << "Productos agotados: " << agotados << std::endl;
 
-    int* totalPtr = obtenerReporteFinal(stock, cantidadProductos);
-    std::cout << "Total de unidades: " << *totalPtr << std::endl;
+    int totalUnidades = obtenerReporteFinal(stock, cantidadProductos);
+    std::cout << "Total de unidades: " << totalUnidades << std::endl;
 
     delete[] stock;
-    delete totalPtr;
     return 0;
 }
