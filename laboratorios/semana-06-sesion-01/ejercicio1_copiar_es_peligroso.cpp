@@ -23,7 +23,6 @@ class RegistroDeVuelo {
             std::cout << "Destruyendo registro (capacidad " << capacidad << ")" << std::endl;
             delete[] alturas;
         }
-
         // Sin constructor de copia propio: el compilador genera uno por
         // defecto que copia "alturas" y "capacidad" tal cual estan, sin
         // reservar un arreglo nuevo. Eso es lo que hoy vamos a revisar.
