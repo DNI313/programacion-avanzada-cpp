@@ -12,19 +12,22 @@
 #include <iostream>
 
 int main() {
-    // TODO: reserva dinamicamente un arreglo de 5 int con new[] y guarda el
-    // puntero en una variable llamada valores.
-
-    // TODO: asigna a valores los numeros 10, 20, 30, 40 y 50 (en ese orden,
-    // por indice).
+    int* valores = new int[5];
+    valores[0] = 10;  // TODO: declara un puntero a un arreglo de 5 int llamado valores.
+    valores[1] = 20;  // TODO: reserva dinamicamente un arreglo de 5 int con new[] y guarda el
+    valores[2] = 30;  // puntero en una variable llamada valores.
+    valores[3] = 40;  // TODO: asigna a valores los numeros 10, 20, 30, 40 y 50 (en ese orden,
+    valores[4] = 50;  // por indice).
 
     int suma = 0;
     for (int i = 0; i < 5; i++) {
         // TODO: suma valores[i] a suma.
+        suma += valores[i];
     }
     std::cout << "Suma: " << suma << std::endl;
 
     // TODO: libera la memoria reservada con delete[].
+    delete[] valores;
 
     return 0;
 }

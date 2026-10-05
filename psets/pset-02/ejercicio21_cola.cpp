@@ -31,3 +31,41 @@
 // Posicion 2: 0
 // Posicion 3: 0
 // Cola liberada
+
+#include <iostream>
+class Cola {
+private:
+    int* datos;
+    int capacidad;
+public:
+    Cola(int c) {
+        capacidad = c;
+        datos = new int[capacidad];
+        for (int i = 0; i < capacidad; i++) {
+            datos[i] = 0;
+        }
+    }
+    ~Cola() {
+        delete[] datos;
+        std::cout << "Cola liberada" << std::endl;
+    }
+    bool agregar(int indice, int valor) {
+        if (indice >= 0 && indice < capacidad) {
+            datos[indice] = valor;
+            return true;
+        }
+        return false;
+    }
+    int getValor(int indice) {
+        return datos[indice];
+    }
+};
+int main() {
+    Cola c1(4);
+    std::cout << "Agregar en 1: " << std::boolalpha << c1.agregar(1, 55) << std::endl;
+    std::cout << "Agregar en 9: " << std::boolalpha << c1.agregar(9, 99) << std::endl;
+    for (int i = 0; i < 4; i++) {
+        std::cout << "Posicion " << i << ": "<< c1.getValor(i) << std::endl;
+    }
+    return 0;
+}

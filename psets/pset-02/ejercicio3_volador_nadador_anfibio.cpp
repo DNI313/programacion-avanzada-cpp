@@ -57,7 +57,7 @@ public:
     }
     int getNumeroTripulantes() {
         // TODO: devuelve numeroTripulantes.
-        return 0;
+        return numeroTripulantes;
     }
 };
 

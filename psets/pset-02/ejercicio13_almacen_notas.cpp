@@ -20,22 +20,27 @@ private:
     int cantidad;
 public:
     AlmacenNotas(int n) {
-        // TODO: asigna cantidad = n.
-        // TODO: reserva con new[] un arreglo de cantidad doubles y guardalo en notas.
-        // TODO: en un bucle, inicializa cada posicion de notas en 0.0.
+        cantidad = n;  // TODO: asigna cantidad = n.
+        notas = new double[cantidad];  // TODO: reserva con new[] un arreglo de cantidad doubles y guardalo en notas.
+        for (int i = 0; i < cantidad; i++) {  // TODO: en un bucle, inicializa cada posicion de notas en 0.0.
+            notas[i] = 0.0;
+        }
     }
     ~AlmacenNotas() {
-        // TODO: libera notas con delete[].
-        // TODO: imprime "Almacen de notas liberado" seguido de un salto de linea.
+        delete[] notas;  // TODO: libera notas con delete[].
+        std::cout << "Almacen de notas liberado" << std::endl;  // TODO: imprime "Almacen de notas liberado" seguido de un salto de linea.
     }
     bool setNota(int indice, double valor) {
-        // TODO: valida que indice este entre 0 (incluido) y cantidad (excluido),
-        // y que valor este entre 0 y 20 (ambos incluidos).
+       if (indice >= 0 && indice < cantidad && valor >= 0 && valor <= 20) {  // TODO: valida que indice este entre 0 (incluido) y cantidad (excluido),
+            // y que valor este entre 0 y 20 (ambos incluidos).
+            notas[indice] = valor;
+            return true;
+        }
         return false;
     }
     double getNota(int indice) {
         // TODO: devuelve notas[indice].
-        return 0;
+        return notas[indice];
     }
 };
 
