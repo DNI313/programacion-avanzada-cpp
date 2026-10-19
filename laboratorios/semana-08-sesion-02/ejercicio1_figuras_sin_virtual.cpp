@@ -2,9 +2,7 @@
 
 class Figura {
     public:
-        // TODO (paso 2): antepone "virtual" a este metodo y vuelve a
-        // compilar y ejecutar. Compara la salida con la del paso 1.
-        double area() {
+        virtual double area() {
             return 0.0;
         }
 
@@ -21,7 +19,7 @@ class Circulo : public Figura {
             radio = nuevoRadio;
         }
 
-        double area() {
+        double area() override {
             return 3.14159 * radio * radio;
         }
 };
@@ -36,7 +34,7 @@ class Rectangulo : public Figura {
             altura = nuevaAltura;
         }
 
-        double area() {
+        double area() override {
             return base * altura;
         }
 };
@@ -54,6 +52,14 @@ int main() {
     // rectangulo. Imprime "A traves de Figura*:" y, con un for, llama a
     // figuras[i]->describir() para cada posicion. Compila y ejecuta
     // antes de tocar la clase Figura.
+   Figura* figuras[2];
+    figuras[0] = &circulo;
+    figuras[1] = &rectangulo;
+
+    std::cout << "A traves de Figura*:" << std::endl;
+    for (int i = 0; i < 2; ++i) {
+        figuras[i]->describir();
+    }
 
     return 0;
 }
