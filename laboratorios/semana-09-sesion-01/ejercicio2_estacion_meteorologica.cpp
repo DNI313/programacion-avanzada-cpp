@@ -9,24 +9,69 @@
 // Viento: 12.4 km/h
 // Agregar un cuarto medidor: rechazado
 
-// TODO: disena la interfaz IMedidor. Toda estacion necesita, de cualquier
-// medidor, tres cosas: leer su valor actual (double), imprimir el nombre
-// de la magnitud que mide ("Temperatura", "Presion", "Viento") e imprimir
-// su unidad ("C", "hPa", "km/h"). Sigue la convencion de interfaz de la
-// sesion: sin atributos.
 class IMedidor {
+    public:
+        virtual double leerValor() const = 0;
+        virtual const char* nombreMagnitud() const = 0;
+        virtual const char* unidad() const = 0;
+        virtual ~IMedidor() = default;
 };
 
-// TODO: Termometro, Barometro y Anemometro implementan IMedidor. Cada uno
-// recibe su valor actual en el constructor y lo devuelve en la lectura.
-// Marca con override cada metodo que implementa la interfaz.
-class Termometro {
+class Termometro : public IMedidor {
+    private:
+        double valor;
+    public:
+        explicit Termometro(double nuevoValor) : valor(nuevoValor) {}
+
+        double leerValor() const override {
+            return valor;
+        }
+
+        const char* nombreMagnitud() const override {
+            return "Temperatura";
+        }
+
+        const char* unidad() const override {
+            return "C";
+        }
 };
 
-class Barometro {
+class Barometro : public IMedidor {
+    private:
+        double valor;
+    public:
+        explicit Barometro(double nuevoValor) : valor(nuevoValor) {}
+
+        double leerValor() const override {
+            return valor;
+        }
+
+        const char* nombreMagnitud() const override {
+            return "Presion";
+        }
+
+        const char* unidad() const override {
+            return "hPa";
+        }
 };
 
-class Anemometro {
+class Anemometro : public IMedidor {
+    private:
+        double valor;
+    public:
+        explicit Anemometro(double nuevoValor) : valor(nuevoValor) {}
+
+        double leerValor() const override {
+            return valor;
+        }
+
+        const char* nombreMagnitud() const override {
+            return "Viento";
+        }
+
+        const char* unidad() const override {
+            return "km/h";
+        }
 };
 
 class EstacionMeteorologica {
@@ -35,27 +80,29 @@ class EstacionMeteorologica {
         int cantidad;
         int capacidad;
     public:
-        EstacionMeteorologica() {
-            cantidad = 0;
-            capacidad = 3;
+            EstacionMeteorologica() : cantidad(0), capacidad(3) {}
+
+            bool agregar(std::unique_ptr<IMedidor> nuevo) {
+                if (cantidad >= capacidad) {
+                    return false;
+                }
+
+                medidores[cantidad] = std::move(nuevo);
+                ++cantidad;
+                return true;
         }
 
-        // TODO: guarda "nuevo" en la siguiente posicion libre del arreglo
-        // y devuelve true. Si la estacion ya esta llena, devuelve false
-        // sin guardar nada. Un unique_ptr no se copia.
-        bool agregar(std::unique_ptr<IMedidor> nuevo) {
-            return false;
-        }
-
-        int getCantidad() {
+            int getCantidad() const {
             return cantidad;
         }
 
-        // TODO: por cada medidor conectado, imprime una linea con el
-        // formato "<magnitud>: <valor> <unidad>". Esta clase no puede
-        // mencionar Termometro, Barometro ni Anemometro en ningun lugar.
-        void reportar() {
-        }
+            void reportar() const {
+                for (int i = 0; i < cantidad; ++i) {
+                    std::cout << medidores[i]->nombreMagnitud() << ": "
+                              << medidores[i]->leerValor() << " "
+                              << medidores[i]->unidad() << std::endl;
+                }
+            }
 };
 
 int main() {

@@ -8,45 +8,62 @@
 // Temperaturas sobre 21.0: 2
 
 class Vector2D {
-    private:
-        double x;
-        double y;
-    public:
-        Vector2D(double xInicial, double yInicial) {
-            x = xInicial;
-            y = yInicial;
-        }
+private:
+    double x;
+    double y;
 
-        double getX() {
-            return x;
-        }
+public:
+    Vector2D(double xInicial, double yInicial) {
+        x = xInicial;
+        y = yInicial;
+    }
 
-        double getY() {
-            return y;
-        }
+    double getX() const {
+        return x;
+    }
 
-        Vector2D operator+(Vector2D otro) {
-            return Vector2D(x + otro.getX(), y + otro.getY());
-        }
+    double getY() const {
+        return y;
+    }
+
+    Vector2D operator+(const Vector2D& otro) const {
+        return Vector2D(x + otro.getX(), y + otro.getY());
+    }
 };
 
-std::ostream& operator<<(std::ostream& os, Vector2D v) {
+std::ostream& operator<<(std::ostream& os, const Vector2D& v) {
     os << "(" << v.getX() << ", " << v.getY() << ")";
     return os;
 }
 
-// TODO: escribe la plantilla de funcion sumarArreglo(datos, cantidad),
-// que recibe un arreglo de T y su cantidad de elementos y devuelve la
-// suma de todos. Tiene que funcionar para int, double y Vector2D.
+template <typename T>
+T sumarArreglo(const T datos[], int cantidad) {
+    T suma = datos[0];
+    for (int i = 1; i < cantidad; ++i) {
+        suma = suma + datos[i];
+    }
+    return suma;
+}
 
-// TODO: escribe la plantilla de funcion contarMayoresQue(datos, cantidad,
-// umbral), que devuelve cuantos elementos del arreglo son mayores que
-// umbral (un int).
+template <typename T>
+int contarMayoresQue(const T datos[], int cantidad, T umbral) {
+    int contador = 0;
+    for (int i = 0; i < cantidad; ++i) {
+        if (datos[i] > umbral) {
+            ++contador;
+        }
+    }
+    return contador;
+}
 
 int main() {
     int pasos[3] = {4200, 1800, 3300};
     double temperaturas[3] = {20.5, 21.5, 22.5};
-    Vector2D desplazamientos[3] = {Vector2D(1.0, 2.0), Vector2D(3.0, -1.0), Vector2D(0.0, 4.0)};
+    Vector2D desplazamientos[3] = {
+        Vector2D(1.0, 2.0),
+        Vector2D(3.0, -1.0),
+        Vector2D(0.0, 4.0)
+    };
 
     std::cout << "Suma de pasos: " << sumarArreglo(pasos, 3) << std::endl;
     std::cout << "Suma de temperaturas: " << sumarArreglo(temperaturas, 3) << std::endl;

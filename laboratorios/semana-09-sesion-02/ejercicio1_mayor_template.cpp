@@ -50,9 +50,20 @@ char mayorCaracter(char a, char b) {
     }
     return b;
 }
+template <typename T>
+T mayor(T a, T b) {
+    if (a > b) {
+        return a;
+    }
+    return b;
+}
 
 // TODO (paso 3): escribe una plantilla "sumarTres" que reciba tres
 // valores del mismo tipo y devuelva a + b + c.
+template <typename T>
+T sumarTres(T a, T b, T c) {
+    return a + b + c;
+}
 
 int main() {
     // TODO (paso 1): cambia las tres llamadas para que usen "mayor".
