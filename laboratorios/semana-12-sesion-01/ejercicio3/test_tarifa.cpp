@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <stdexcept>
 
 #include "tarifa.h"
 
@@ -22,3 +23,37 @@
 //
 //     g++ -std=c++20 -Wall -Wextra -g -I ejercicio3/version_a ejercicio3/test_tarifa.cpp -lgtest_main -lgtest -pthread -o bin/test_tarifa_a
 //     ./bin/test_tarifa_a
+
+TEST(TarifaTest, MinutosNegativosLanzanInvalidArgument) {
+    EXPECT_THROW(tarifaEnCentavos(-1), std::invalid_argument);
+}
+
+TEST(TarifaTest, HastaQuinceMinutosNoSeCobra) {
+    for (int minutos : {0, 1, 14, 15}) {
+        SCOPED_TRACE(minutos);
+        EXPECT_EQ(tarifaEnCentavos(minutos), 0);
+    }
+}
+
+TEST(TarifaTest, CobraPorCadaHoraOFraccionDesdeElMinutoCero) {
+    const int casos[][2] = {
+        {16, 50},
+        {59, 50},
+        {60, 50},
+        {61, 100},
+        {119, 100},
+        {120, 100},
+        {121, 150},
+    };
+
+    for (const auto& caso : casos) {
+        SCOPED_TRACE(caso[0]);
+        EXPECT_EQ(tarifaEnCentavos(caso[0]), caso[1]);
+    }
+}
+
+TEST(TarifaTest, NuncaSuperaQuinientosCentavos) {
+    EXPECT_EQ(tarifaEnCentavos(600), 500);
+    EXPECT_EQ(tarifaEnCentavos(601), 500);
+    EXPECT_EQ(tarifaEnCentavos(1200), 500);
+}

@@ -18,12 +18,40 @@ TEST(Estacionamiento, PrimeraPlacaRecibePuestoCero) {
     EXPECT_EQ(*puesto, 0);
 }
 
-// TODO 1: prueba LlenoDevuelveVacio. Con 3 puestos, asigna tres placas
-// distintas; la cuarta tiene que recibir un optional vacio
-// (EXPECT_FALSE sobre has_value()).
+// Con 3 puestos, tres placas distintas entran; la cuarta recibe un optional
+// vacio porque ya no hay lugar.
+TEST(Estacionamiento, LlenoDevuelveVacio) {
+    Estacionamiento estacionamiento(3);
 
-// TODO 2: prueba PlacaRepetidaLanza. Asigna la placa 7788 y verifica que
-// asignarla otra vez lanza std::invalid_argument (EXPECT_THROW).
+    estacionamiento.asignarPuesto(4521);
+    estacionamiento.asignarPuesto(7788);
+    estacionamiento.asignarPuesto(3011);
+    std::optional<int> cuarta = estacionamiento.asignarPuesto(9090);
 
-// TODO 3: prueba PuestoLiberadoSeReusa. Llena los 3 puestos, libera la
-// placa del puesto 1 y verifica que la siguiente placa recibe el puesto 1.
+    EXPECT_FALSE(cuarta.has_value());
+}
+
+// Una placa que ya esta adentro no puede entrar otra vez: es un error de
+// quien llama, asi que se lanza una excepcion.
+TEST(Estacionamiento, PlacaRepetidaLanza) {
+    Estacionamiento estacionamiento(3);
+
+    estacionamiento.asignarPuesto(123);
+
+    EXPECT_THROW(estacionamiento.asignarPuesto(123), std::invalid_argument);
+}
+
+// Al salir una placa, su puesto queda libre y la siguiente placa lo usa.
+TEST(Estacionamiento, PuestoLiberadoSeReusa) {
+    Estacionamiento estacionamiento(3);
+
+    estacionamiento.asignarPuesto(4521);  // puesto 0
+    estacionamiento.asignarPuesto(7788);  // puesto 1
+    estacionamiento.asignarPuesto(3011);  // puesto 2
+    estacionamiento.liberar(7788);
+
+    std::optional<int> nueva = estacionamiento.asignarPuesto(9090);
+
+    ASSERT_TRUE(nueva.has_value());
+    EXPECT_EQ(*nueva, 1);
+}

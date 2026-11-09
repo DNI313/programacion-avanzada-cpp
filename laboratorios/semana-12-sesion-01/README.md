@@ -104,18 +104,18 @@ Completa la tabla con el resultado de tu suite:
 
 | Versión | Pruebas que fallan | ¿Cumple la descripción? |
 |---|---|---|
-| `version_a` | _(…)_ | _(…)_ |
-| `version_b` | _(…)_ | _(…)_ |
-| `version_c` | _(…)_ | _(…)_ |
-| `version_d` | _(…)_ | _(…)_ |
+| `version_a` | `HastaQuinceMinutosNoSeCobra` (cobra 50 centavos en 15 minutos) | No |
+| `version_b` | `CobraPorCadaHoraOFraccionDesdeElMinutoCero` (cobra 100 en 60 minutos y 150 en 120) | No |
+| `version_c` | Ninguna | Sí |
+| `version_d` | `MinutosNegativosLanzanInvalidArgument` (no lanza la excepción) | No |
 
 Responde: ¿qué valores de `minutos` elegiste para tus pruebas, y por qué esos y no otros?
 
-_(tu respuesta)_
+Probé un valor negativo (`-1`), los límites de la gratuidad (`14`, `15` y `16`), los límites de horas (`59`, `60`, `61`, `119`, `120` y `121`) y estadías suficientemente largas para verificar el tope (`600`, `601` y `1200`). Esos valores permiten detectar errores en los bordes de cada regla: justo antes, en y justo después del límite.
 
 Responde: la versión que pasa tu suite completa, ¿está demostrada correcta? Describe un error que una quinta versión podría tener y que tu suite no detectaría.
 
-_(tu respuesta)_
+No. Las pruebas solo verifican los valores elegidos, no todos los minutos posibles. Por ejemplo, una quinta versión podría calcular mal la tarifa para 200 minutos y aun así pasar la suite, porque ese valor no está probado.
 
 ## Qué construcciones nuevas usa este laboratorio
 

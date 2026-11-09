@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include <stdexcept>
 
 // Salida esperada:
 // Stock: 120=2 210=5 305=10
@@ -29,18 +30,18 @@ class Bodega {
         // - codigo que no existe: std::out_of_range, "codigo desconocido";
         // - stock menor que cantidad: std::runtime_error, "stock insuficiente".
         // Ningun caso rechazado puede modificar el stock.
-        bool retirar(int codigo, int cantidad) {
+        void retirar(int codigo, int cantidad) {
             if (cantidad <= 0) {
-                return false;
+                throw std::invalid_argument("cantidad no positiva");
             }
-            if (stock.count(codigo) == 0) {
-                return false;
+            auto elemento = stock.find(codigo);
+            if (elemento == stock.end()) {
+                throw std::out_of_range("codigo desconocido");
             }
-            if (stock[codigo] < cantidad) {
-                return false;
+            if (elemento->second < cantidad) {
+                throw std::runtime_error("stock insuficiente");
             }
-            stock[codigo] = stock[codigo] - cantidad;
-            return true;
+            elemento->second -= cantidad;
         }
 
         // TODO 2: lee el stock con stock.at(codigo), sin revisar antes con
@@ -74,10 +75,11 @@ int main() {
         // TODO 3: con try/catch, imprime "despachado" si retirar no lanza
         // nada, o "rechazado, " y el mensaje de la excepcion si lanza.
         std::cout << "Pedido de " << cantidades[i] << " x " << codigos[i] << ": ";
-        if (bodega.retirar(codigos[i], cantidades[i])) {
+        try {
+            bodega.retirar(codigos[i], cantidades[i]);
             std::cout << "despachado" << std::endl;
-        } else {
-            std::cout << "rechazado" << std::endl;
+        } catch (const std::exception& e) {
+            std::cout << "rechazado, " << e.what() << std::endl;
         }
     }
 

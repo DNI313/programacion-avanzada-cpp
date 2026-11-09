@@ -1,5 +1,7 @@
 #include <iostream>
 #include <map>
+#include <optional>
+#include <stdexcept>
 #include <vector>
 
 // Salida esperada:
@@ -14,89 +16,107 @@
 // Placa 9090: puesto 0
 // Placa 4521 no esta en el estacionamiento
 
-// El estacionamiento de la facultad tiene 3 puestos, numerados desde 0.
-// Hoy cada funcion devuelve un codigo: -1 o -2 en vez de un numero de
-// puesto. Corre el archivo antes de cambiar nada: main imprime esos
-// codigos como si fueran puestos.
-//
-// Refactoriza asignarPuesto, puestoDe y liberar para que ninguna devuelva
-// codigos. Para cada caso que hoy es un codigo, decide si es una ausencia
-// esperada (std::optional) o un error de quien llama (una excepcion de
-// <stdexcept>), y ajusta main para producir la salida esperada. No cambies
-// los datos de main ni el orden de las operaciones.
-
 class Estacionamiento {
-    private:
-        int totalPuestos;
-        std::vector<bool> ocupado;
-        std::map<int, int> puestoDePlaca;
-    public:
-        Estacionamiento(int puestos) {
-            totalPuestos = puestos;
-            for (int i = 0; i < puestos; i++) {
-                ocupado.push_back(false);
-            }
-        }
+private:
+    int totalPuestos;
+    std::vector<bool> ocupado;
+    std::map<int, int> puestoDePlaca;
 
-        // Devuelve el puesto asignado, -1 si no hay puestos libres, o -2 si
-        // la placa ya esta adentro.
-        int asignarPuesto(int placa) {
-            if (puestoDePlaca.count(placa) == 1) {
-                return -2;
-            }
-            for (int i = 0; i < totalPuestos; i++) {
-                if (!ocupado[i]) {
-                    ocupado[i] = true;
-                    puestoDePlaca[placa] = i;
-                    return i;
-                }
-            }
-            return -1;
+public:
+    Estacionamiento(int puestos) {
+        totalPuestos = puestos;
+        for (int i = 0; i < puestos; i++) {
+            ocupado.push_back(false);
         }
+    }
 
-        // Devuelve el puesto de la placa, o -1 si no esta adentro.
-        int puestoDe(int placa) {
-            if (puestoDePlaca.count(placa) == 0) {
-                return -1;
-            }
-            return puestoDePlaca[placa];
+    // Devuelve el puesto asignado, o std::nullopt si no hay puestos libres
+    // (situacion esperada: un estacionamiento puede llenarse).
+    // Lanza std::invalid_argument si la placa ya esta adentro (error de
+    // quien llama: una placa no puede entrar dos veces).
+    std::optional<int> asignarPuesto(int placa) {
+        if (puestoDePlaca.count(placa) == 1) {
+            throw std::invalid_argument("placa ya registrada");
         }
+        for (int i = 0; i < totalPuestos; i++) {
+            if (!ocupado[i]) {
+                ocupado[i] = true;
+                puestoDePlaca[placa] = i;
+                return i;
+            }
+        }
+        return std::nullopt;
+    }
 
-        // Libera el puesto de la placa y lo devuelve, o -1 si no estaba.
-        int liberar(int placa) {
-            int puesto = puestoDe(placa);
-            if (puesto == -1) {
-                return -1;
-            }
-            ocupado[puesto] = false;
-            puestoDePlaca.erase(placa);
-            return puesto;
+    // Devuelve el puesto de la placa, o std::nullopt si no esta adentro
+    // (consultar por una placa ausente es una pregunta legitima).
+    std::optional<int> puestoDe(int placa) {
+        auto it = puestoDePlaca.find(placa);
+        if (it == puestoDePlaca.end()) {
+            return std::nullopt;
         }
+        return it->second;
+    }
+
+    // Libera el puesto de la placa y lo devuelve, o std::nullopt si no estaba.
+    std::optional<int> liberar(int placa) {
+        std::optional<int> puesto = puestoDe(placa);
+        if (!puesto) {
+            return std::nullopt;
+        }
+        ocupado[*puesto] = false;
+        puestoDePlaca.erase(placa);
+        return puesto;
+    }
 };
+
+// Registra la llegada de una placa e imprime el resultado.
+void registrarLlegada(Estacionamiento& estacionamiento, int placa) {
+    try {
+        std::optional<int> puesto = estacionamiento.asignarPuesto(placa);
+        if (puesto) {
+            std::cout << "Placa " << placa << ": puesto " << *puesto << std::endl;
+        } else {
+            std::cout << "Placa " << placa << ": sin puesto, estacionamiento lleno" << std::endl;
+        }
+    } catch (const std::invalid_argument& error) {
+        std::cout << "Placa " << placa << ": error, " << error.what() << std::endl;
+    }
+}
+
+// Libera la placa e imprime el resultado.
+void registrarSalida(Estacionamiento& estacionamiento, int placa) {
+    std::optional<int> liberado = estacionamiento.liberar(placa);
+    if (liberado) {
+        std::cout << "Placa " << placa << " sale del puesto " << *liberado << std::endl;
+    } else {
+        std::cout << "Placa " << placa << " no esta en el estacionamiento" << std::endl;
+    }
+}
 
 int main() {
     Estacionamiento estacionamiento(3);
 
     int llegadas[5] = {4521, 7788, 3011, 9090, 7788};
     for (int i = 0; i < 5; i++) {
-        int puesto = estacionamiento.asignarPuesto(llegadas[i]);
-        std::cout << "Placa " << llegadas[i] << ": puesto " << puesto << std::endl;
+        registrarLlegada(estacionamiento, llegadas[i]);
     }
 
     int consultas[2] = {7788, 5555};
     for (int i = 0; i < 2; i++) {
-        int puesto = estacionamiento.puestoDe(consultas[i]);
-        std::cout << "Placa " << consultas[i] << " esta en el puesto " << puesto << std::endl;
+        std::optional<int> puesto = estacionamiento.puestoDe(consultas[i]);
+        if (puesto) {
+            std::cout << "Placa " << consultas[i] << " esta en el puesto " << *puesto << std::endl;
+        } else {
+            std::cout << "Placa " << consultas[i] << " no esta en el estacionamiento" << std::endl;
+        }
     }
 
-    int liberado = estacionamiento.liberar(4521);
-    std::cout << "Placa 4521 sale del puesto " << liberado << std::endl;
+    registrarSalida(estacionamiento, 4521);
 
-    int nuevo = estacionamiento.asignarPuesto(9090);
-    std::cout << "Placa 9090: puesto " << nuevo << std::endl;
+    registrarLlegada(estacionamiento, 9090);
 
-    int otraVez = estacionamiento.liberar(4521);
-    std::cout << "Placa 4521 sale del puesto " << otraVez << std::endl;
+    registrarSalida(estacionamiento, 4521);
 
     return 0;
 }

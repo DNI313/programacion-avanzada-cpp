@@ -17,27 +17,31 @@
 //   codigo no existe.
 
 class Bodega {
-    private:
-        std::map<int, int> stock;
-    public:
-        void ingresar(int codigo, int cantidad) {
-            stock[codigo] = stock[codigo] + cantidad;
-        }
+private:
+    std::map<int, int> stock;
 
-        void retirar(int codigo, int cantidad) {
-            if (cantidad <= 0) {
-                throw std::invalid_argument("cantidad no positiva");
-            }
-            if (stock[codigo] < cantidad) {
-                if (stock.count(codigo) == 0) {
-                    throw std::out_of_range("codigo desconocido");
-                }
-                throw std::runtime_error("stock insuficiente");
-            }
-            stock[codigo] = stock[codigo] - cantidad;
-        }
+public:
+    void ingresar(int codigo, int cantidad) {
+        stock[codigo] = stock[codigo] + cantidad;
+    }
 
-        int stockDe(int codigo) {
-            return stock.at(codigo);
+    void retirar(int codigo, int cantidad) {
+        if (cantidad <= 0) {
+            throw std::invalid_argument("cantidad no positiva");
         }
+        // find no inserta nada: consultar un codigo desconocido no debe
+        // crearlo (stock[codigo] lo creaba con valor 0).
+        std::map<int, int>::iterator it = stock.find(codigo);
+        if (it == stock.end()) {
+            throw std::out_of_range("codigo desconocido");
+        }
+        if (it->second < cantidad) {
+            throw std::runtime_error("stock insuficiente");
+        }
+        it->second = it->second - cantidad;
+    }
+
+    int stockDe(int codigo) {
+        return stock.at(codigo);
+    }
 };

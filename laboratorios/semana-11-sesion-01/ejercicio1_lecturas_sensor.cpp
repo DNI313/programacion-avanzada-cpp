@@ -7,7 +7,7 @@
 
 double lecturaEn(std::vector<double> lecturas, int hora) {
     // TODO 1: lee la lectura con lecturas.at(hora) en vez de lecturas[hora].
-    return lecturas[hora];
+    return lecturas.at(hora);
 }
 
 double promedioEntre(std::vector<double> lecturas, int desde, int hasta) {
