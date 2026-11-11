@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <vector>
 
 // Cola de impresion de la biblioteca. Cada trabajo es su numero de
@@ -16,7 +17,7 @@
 // - minutosTotales() suma los minutos de todos los trabajos de la cola.
 
 int minutosDeImpresion(int paginas) {
-    return paginas / 10;
+    return paginas / 10 + (paginas % 10 != 0);
 }
 
 class ColaDeImpresion {
@@ -36,10 +37,10 @@ class ColaDeImpresion {
         }
 
         void dividirGrandes() {
-            for (auto it = trabajos.begin(); it != trabajos.end(); ++it) {
-                if (*it > 20) {
-                    int resto = *it - 20;
-                    *it = 20;
+            for (std::size_t posicion = 0; posicion < trabajos.size(); ++posicion) {
+                if (trabajos[posicion] > 20) {
+                    int resto = trabajos[posicion] - 20;
+                    trabajos[posicion] = 20;
                     trabajos.push_back(resto);
                 }
             }
