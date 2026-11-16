@@ -17,27 +17,25 @@
 // Visitas registradas: 2000000
 
 class ContadorDeVisitas {
-    private:
-        int total;
-        // TODO 2: un std::mutex que proteja total.
-    public:
-        ContadorDeVisitas() {
-            total = 0;
-        }
+private:
+    int total = 0;              // dato compartido entre los hilos
+    mutable std::mutex m;       // candado que protege a total
 
-        void registrar() {
-            // TODO 2: antes de tocar total, toma el candado con
-            // std::lock_guard<std::mutex> guardia(candado);
-            total = total + 1;
-        }
+public:
+    void registrar() {
+        std::lock_guard<std::mutex> lock(m);   // bloquea; se suelta solo al salir
+        total++;                               // sección crítica
+    }
 
-        int getTotal() {
-            return total;
-        }
+    int getTotal() const {
+        std::lock_guard<std::mutex> lock(m);   // también protege la lectura
+        return total;
+    }
 };
 
-void puerta(ContadorDeVisitas* contador, int personas) {
-    for (int i = 0; i < personas; i++) {
+// Cada "puerta" registra una cantidad de visitas
+void puerta(ContadorDeVisitas* contador, int visitas) {
+    for (int i = 0; i < visitas; i++) {
         contador->registrar();
     }
 }
@@ -45,12 +43,12 @@ void puerta(ContadorDeVisitas* contador, int personas) {
 int main() {
     ContadorDeVisitas contador;
 
-    // TODO 1: reemplaza las dos llamadas por dos std::thread que ejecuten
-    // puerta(&contador, 1000000) al mismo tiempo, y espera a que terminen
-    // los dos con join() antes de imprimir.
-    puerta(&contador, 1000000);
-    puerta(&contador, 1000000);
+    std::thread t1(puerta, &contador, 1000000);   // hilo 1: 1,000,000 visitas
+    std::thread t2(puerta, &contador, 1000000);   // hilo 2: 1,000,000 visitas
 
+    t1.join();   // espera a que termine t1
+    t2.join();   // espera a que termine t2
+
+    // Siempre debe imprimir 2000000
     std::cout << "Visitas registradas: " << contador.getTotal() << std::endl;
-    return 0;
 }

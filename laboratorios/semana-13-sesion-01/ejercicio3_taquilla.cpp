@@ -40,6 +40,61 @@
 // Pares a medias: 0
 
 // TODO: escribe aqui la clase Taquilla.
+class Taquilla {
+    private:
+        std::vector<int> duenos;   // duenos[i] = comprador del asiento i, 0 si esta libre
+        int cantidadVendidos;      // asientos con dueno
+        std::mutex m;              // un solo candado para toda la taquilla
+
+        // Solo se llama con el candado ya tomado.
+        bool existe(int asiento) {
+            return asiento >= 0 && asiento < (int)duenos.size();
+        }
+    public:
+        Taquilla(int asientos) : duenos(asientos, 0), cantidadVendidos(0) {
+        }
+
+        // Reserva un asiento si existe y esta libre.
+        bool reservar(int asiento, int comprador) {
+            std::lock_guard<std::mutex> lock(m);   // la pregunta y el cambio, juntos
+            if (!existe(asiento) || duenos[asiento] != 0) {
+                return false;
+            }
+            duenos[asiento] = comprador;
+            cantidadVendidos = cantidadVendidos + 1;
+            return true;
+        }
+
+        // Reserva los dos asientos o ninguno.
+        bool reservarPar(int a, int b, int comprador) {
+            std::lock_guard<std::mutex> lock(m);   // revisar ambos y reservar ambos, juntos
+            if (a == b || !existe(a) || !existe(b)) {
+                return false;
+            }
+            if (duenos[a] != 0 || duenos[b] != 0) {
+                return false;                      // no reserva ninguno
+            }
+            duenos[a] = comprador;
+            duenos[b] = comprador;
+            cantidadVendidos = cantidadVendidos + 2;
+            return true;
+        }
+
+        // Comprador del asiento, o 0 si esta libre (o no existe).
+        int duenoDe(int asiento) {
+            std::lock_guard<std::mutex> lock(m);
+            if (!existe(asiento)) {
+                return 0;
+            }
+            return duenos[asiento];
+        }
+
+        // Cuantos asientos tienen dueno.
+        int vendidos() {
+            std::lock_guard<std::mutex> lock(m);
+            return cantidadVendidos;
+        }
+};
 
 void vendedor(Taquilla* taquilla, int comprador, int* logradas) {
     for (int asiento = 0; asiento < 20000; asiento++) {
