@@ -42,7 +42,73 @@
 // Estudiantes sobre la cuota: 0
 // Despues de cerrar, se acepta un trabajo: 0
 
-// TODO: escribe aqui la clase CentroDeImpresion.
+class CentroDeImpresion {
+    private:
+        static const int CUOTA = 100;
+
+        std::atomic<bool> cerrado;          // un solo valor independiente
+        std::atomic<int> aceptados;         // contadores independientes
+        std::atomic<int> rechazados;
+        std::atomic<int> totalPaginas;
+
+        std::map<int, int> paginasPorEstudiante;   // estructura compuesta + cuota
+        std::mutex m;                              // protege el map y la cuota
+    public:
+        CentroDeImpresion() {
+            cerrado = false;
+            aceptados = 0;
+            rechazados = 0;
+            totalPaginas = 0;
+        }
+
+        bool enviar(int estudiante, int paginas) {
+            if (cerrado || paginas <= 0) {
+                return false;
+            }
+            {
+                // Revisar la cuota y sumar las paginas, juntos.
+                std::lock_guard<std::mutex> lock(m);
+                int actuales = paginasPorEstudiante[estudiante];
+                if (actuales + paginas > CUOTA) {
+                    rechazados++;
+                    return false;
+                }
+                paginasPorEstudiante[estudiante] = actuales + paginas;
+            }
+            aceptados++;
+            totalPaginas += paginas;
+            return true;
+        }
+
+        void cerrar() {
+            cerrado = true;
+        }
+
+        bool estaCerrado() {
+            return cerrado;
+        }
+
+        int trabajosAceptados() {
+            return aceptados;
+        }
+
+        int rechazadosPorCuota() {
+            return rechazados;
+        }
+
+        int paginasTotales() {
+            return totalPaginas;
+        }
+
+        int paginasDe(int estudiante) {
+            std::lock_guard<std::mutex> lock(m);
+            auto it = paginasPorEstudiante.find(estudiante);   // find no inserta
+            if (it == paginasPorEstudiante.end()) {
+                return 0;
+            }
+            return it->second;
+        }
+};
 
 void computadora(CentroDeImpresion* centro) {
     for (int estudiante = 1; estudiante <= 50; estudiante++) {
